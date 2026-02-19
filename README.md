@@ -5,7 +5,7 @@ Group 17
 
 ---
 
-## ✅ Sprint 01 Checklist
+## Sprint 01 Checklist
 
 ### 🔹 UI-1 – Product Browsing
 - [x] Product data model created
@@ -25,14 +25,22 @@ Group 17
 
 ---
 
-### 🔹 UI-3 – Product Details (Scaffolded)
+### 🔹 UI-3 – Product Details
 - [ ] Placeholder button added
 - [ ] Navigation structure planned
 - [ ] Page structure outlined for next sprint
 
 ---
 
-### 🔹 Code Quality
+### 🔹 UI-3 – Product Details
+- [ ] Implement cart storage mechanism
+- [ ] Enable add/remove functionality
+- [ ] Implement quantity update feature
+- [ ] Calculate subtotal dynamically
+
+---
+
+### 🔹 Code Check
 - [ ] No console errors
 - [ ] Files properly structured
 - [ ] Clean, readable variable names
@@ -41,8 +49,8 @@ Group 17
 ---
 
 ### 🔹 Testing
-- [ ] Category filter manually tested
-- [ ] Search functionality tested
+- [x] Category filter manually tested
+- [x] Search functionality tested
 - [ ] Combined filter tested
 - [ ] Empty-state message tested
 - [ ] UI responsive on smaller screens
@@ -50,7 +58,7 @@ Group 17
 ---
 
 ### 🔹 Sprint Documentation
-- [ ] Sprint Goal written
+- [x] Sprint Goal written
 - [ ] Sprint Backlog updated (Excel file)
 - [ ] Implementation Progress section written
 - [ ] Testing & Review section completed
