@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ShopSphere - Sprint 01 Prototype</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🛍️</span>
+      <span class="name">ShopSphere</span>
+    </div>
+
+    <input id="searchInput" class="search" placeholder="Search products..." />
+
+    <div class="right">
+      <button class="iconBtn">🛒</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1>Summer Collection</h1>
+      <p>Explore our latest arrivals with exclusive discounts.</p>
+      <button class="primary">Shop Now</button>
+    </section>
+
+    <div class="row" id="categoryRow"></div>
+    <section class="grid" id="productGrid"></section>
+
+    <div class="empty" id="emptyState" hidden>
+      No products found. Try a different search.
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
