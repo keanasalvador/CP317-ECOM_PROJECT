@@ -65,6 +65,144 @@ body {
   border-radius: 12px;
   border: 1px solid #ddd;
   text-align: center;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.card:hover {
+  border-color: #bbb;
+}
+
+.details {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.detailsHeader {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.detailsIcon {
+  font-size: 44px;
+}
+
+.detailsMeta h2 {
+  margin: 0 0 6px 0;
+}
+
+.detailsMeta .price {
+  font-size: 18px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #ccc;
+  background: #f8f8f8;
+  font-size: 12px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.primary {
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 10px;
+  background: black;
+  color: white;
+  cursor: pointer;
+}
+
+.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.linkBtn {
+  display: inline-block;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  text-decoration: none;
+  color: inherit;
+  background: white;
+  cursor: pointer;
+}
+
+.cartList {
+  display: grid;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.cartItem {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.cartInfo {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.cartInfo h3,
+.cartInfo p {
+  margin: 0;
+}
+
+.cartControls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.qtyControls {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.qtyInput {
+  width: 60px;
+  text-align: center;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.cartSummary {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #ddd;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+}
+
+.danger {
+  border-color: #c99;
+  color: #a22;
 }
 
 .thumb {
