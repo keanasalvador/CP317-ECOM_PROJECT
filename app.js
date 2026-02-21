@@ -1,13 +1,4 @@
 
-//product ID
-const PRODUCTS = [
-  { id: "p1", name: "Samsung TV 4K", category: "Electronics", price: 499.00, icon: "📺" },
-  { id: "p2", name: "T-Shirt", category: "Clothing", price: 25.00, icon: "👕" },
-  { id: "p3", name: "Catcher in the Rye", category: "Books", price: 45.00, icon: "📘" },
-  { id: "p4", name: "Wireless Headphones", category: "Electronics", price: 120.00, icon: "🎧" },
-  { id: "p5", name: "Modern Sofa", category: "Furniture", price: 850.00, icon: "🛋️" },
-];
-
 const CATEGORIES = ["All", "Electronics", "Clothing", "Books", "Furniture"];
 
 //FILTER
@@ -58,12 +49,12 @@ function renderProducts() {
   emptyState.hidden = filtered.length !== 0;
 
   productGrid.innerHTML = filtered.map(p => `
-    <div class="card">
+    <a class="card" href="product.html?id=${encodeURIComponent(p.id)}" aria-label="View details for ${p.name}">
       <div class="thumb">${p.icon}</div>
       <h3>${p.name}</h3>
       <p>${p.category}</p>
       <strong>${money(p.price)}</strong>
-    </div>
+    </a>
   `).join("");
 }
 
