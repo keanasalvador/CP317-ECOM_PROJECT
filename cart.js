@@ -239,7 +239,7 @@ if (checkoutForm) {
     renderCart();
 
     alert("Order placed successfully!");
-    window.location.href = "index.html";
+    window.location.href = "confirmation.html";
   });
 }
 
