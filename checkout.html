@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Secure Checkout</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<header>
+  <h1>Checkout</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="cart.html">Cart</a>
+  </nav>
+</header>
+
+<main>
+
+<section class="checkout-container">
+
+  <h2>Secure Payment</h2>
+  <p>Please enter your shipping and payment information to place your order.</p>
+
+  <form id="checkoutForm">
+
+    <!-- SHIPPING INFO -->
+
+    <h3>Shipping Information</h3>
+
+    <label for="fullName">Full Name</label>
+    <input type="text" id="fullName" required>
+
+    <label for="address">Address</label>
+    <input type="text" id="address" required>
+
+    <label for="city">City</label>
+    <input type="text" id="city" required>
+
+    <label for="postal">Postal Code</label>
+    <input type="text" id="postal" required>
+
+    <!-- PAYMENT INFO -->
+
+    <h3>Payment Details</h3>
+
+    <label for="cardName">Name on Card</label>
+    <input type="text" id="cardName" required>
+
+    <label for="cardNumber">Card Number</label>
+    <input type="text"
+           id="cardNumber"
+           placeholder="1234 5678 9012 3456"
+           maxlength="19"
+           required>
+
+    <label for="expiry">Expiry Date</label>
+    <input type="text"
+           id="expiry"
+           placeholder="MM/YY"
+           maxlength="5"
+           required>
+
+    <label for="cvv">CVV</label>
+    <input type="password"
+           id="cvv"
+           maxlength="4"
+           required>
+
+    <!-- ERROR MESSAGE -->
+
+    <p id="checkoutError" style="color:red;"></p>
+
+    <!-- SUBMIT BUTTON -->
+
+    <button type="submit">
+      Place Order
+    </button>
+
+  </form>
+
+</section>
+
+
+<!-- ORDER SUMMARY -->
+
+<section class="order-summary">
+
+  <h3>Order Summary</h3>
+
+  <div id="checkoutItems">
+    <!-- cart items will appear here -->
+  </div>
+
+  <h4>
+    Total: <span id="checkoutTotal">$0.00</span>
+  </h4>
+
+</section>
+
+</main>
+
+
+<footer>
+  <p>Secure Checkout | ShopSphere</p>
+</footer>
+
+
+<!-- JAVASCRIPT -->
+
+<script src="products.js"></script>
+<script src="cart-utils.js"></script>
+<script src="checkout.js"></script>
+
+</body>
+</html>
