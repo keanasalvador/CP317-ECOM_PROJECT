@@ -9,9 +9,7 @@ function renderConfirmation() {
 
   if (!latestOrder) {
     confirmationBox.innerHTML = `
-      <div class="empty">
-        No recent order was found.
-      </div>
+      <div class="empty">No recent order was found.</div>
     `;
     return;
   }
