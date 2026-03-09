@@ -274,3 +274,34 @@ body {
   font-size: 14px;
   margin: 6px 0 0 0;
 }
+.confirmMessage {
+  margin-bottom: 18px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #eef7ee;
+  border: 1px solid #cfe3cf;
+}
+
+.confirmDetails {
+  margin-bottom: 18px;
+}
+
+.confirmDetails p {
+  margin: 8px 0;
+}
+
+.confirmItems {
+  margin-top: 20px;
+}
+
+.confirmItem {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.confirmItem:last-child {
+  border-bottom: 0;
+}
