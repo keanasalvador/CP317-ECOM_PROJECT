@@ -5,6 +5,11 @@ function money(n) {
 const cartList = document.getElementById("cartList");
 const cartSummary = document.getElementById("cartSummary");
 
+const checkoutForm = document.getElementById("checkoutForm");
+const checkoutError = document.getElementById("checkoutError");
+const cardNumberInput = document.getElementById("cardNumber");
+const expiryInput = document.getElementById("expiry");
+
 const productById = Object.fromEntries(PRODUCTS.map((p) => [p.id, p]));
 
 function getLineItems() {
@@ -97,5 +102,145 @@ cartList.addEventListener("change", (event) => {
   updateCartQuantity(id, quantity);
   renderCart();
 });
+
+// ==============================
+// UI-5 PAYMENT SECURITY / CHECKOUT
+// ==============================
+
+function clearCartData() {
+  localStorage.removeItem("cart");
+}
+
+function validateCheckoutForm() {
+  const fullName = document.getElementById("fullName").value.trim();
+  const address = document.getElementById("address").value.trim();
+  const city = document.getElementById("city").value.trim();
+  const postal = document.getElementById("postal").value.trim();
+  const cardName = document.getElementById("cardName").value.trim();
+  const cardNumber = document.getElementById("cardNumber").value.replace(/\s/g, "").trim();
+  const expiry = document.getElementById("expiry").value.trim();
+  const cvv = document.getElementById("cvv").value.trim();
+
+  if (
+    fullName === "" ||
+    address === "" ||
+    city === "" ||
+    postal === "" ||
+    cardName === "" ||
+    cardNumber === "" ||
+    expiry === "" ||
+    cvv === ""
+  ) {
+    return "All fields are required.";
+  }
+
+  if (!/^\d{16}$/.test(cardNumber)) {
+    return "Card number must be 16 digits.";
+  }
+
+  if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+    return "Expiry date must be in MM/YY format.";
+  }
+
+  if (!/^\d{3,4}$/.test(cvv)) {
+    return "CVV must be 3 or 4 digits.";
+  }
+
+  return "";
+}
+
+function buildOrderObject() {
+  const items = getLineItems().map(({ product, qty }) => ({
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    quantity: qty,
+    lineTotal: product.price * qty
+  }));
+
+  return {
+    orderId: "ORD-" + Date.now(),
+    fullName: document.getElementById("fullName").value.trim(),
+    address: document.getElementById("address").value.trim(),
+    city: document.getElementById("city").value.trim(),
+    postal: document.getElementById("postal").value.trim(),
+    cardName: document.getElementById("cardName").value.trim(),
+    maskedCard: "**** **** **** " + document.getElementById("cardNumber").value.replace(/\s/g, "").slice(-4),
+    items: items,
+    total: getCartSubtotal(PRODUCTS),
+    status: "Placed",
+    date: new Date().toLocaleString()
+  };
+}
+
+if (cardNumberInput) {
+  cardNumberInput.addEventListener("input", () => {
+    let value = cardNumberInput.value.replace(/\D/g, "");
+    value = value.substring(0, 16);
+
+    let formatted = "";
+    for (let i = 0; i < value.length; i++) {
+      if (i > 0 && i % 4 === 0) {
+        formatted += " ";
+      }
+      formatted += value[i];
+    }
+
+    cardNumberInput.value = formatted;
+  });
+}
+
+if (expiryInput) {
+  expiryInput.addEventListener("input", () => {
+    let value = expiryInput.value.replace(/\D/g, "");
+    value = value.substring(0, 4);
+
+    if (value.length >= 3) {
+      expiryInput.value = value.substring(0, 2) + "/" + value.substring(2);
+    } else {
+      expiryInput.value = value;
+    }
+  });
+}
+
+if (checkoutForm) {
+  checkoutForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    if (checkoutError) {
+      checkoutError.textContent = "";
+    }
+
+    const cart = getCart();
+    if (Object.keys(cart).length === 0) {
+      if (checkoutError) {
+        checkoutError.textContent = "Your cart is empty.";
+      }
+      return;
+    }
+
+    const errorMessage = validateCheckoutForm();
+    if (errorMessage !== "") {
+      if (checkoutError) {
+        checkoutError.textContent = errorMessage;
+      }
+      return;
+    }
+
+    const order = buildOrderObject();
+
+    localStorage.setItem("latestOrder", JSON.stringify(order));
+
+    const existingOrders = JSON.parse(localStorage.getItem("orders")) || [];
+    existingOrders.push(order);
+    localStorage.setItem("orders", JSON.stringify(existingOrders));
+
+    clearCartData();
+    renderCart();
+
+    alert("Order placed successfully!");
+    window.location.href = "confirmation.html";
+  });
+}
 
 renderCart();

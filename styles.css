@@ -216,3 +216,92 @@ body {
   border-radius: 12px;
   background: white;
 }
+.checkoutSection {
+  margin-top: 28px;
+  padding: 18px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: white;
+}
+
+.checkoutSection h2,
+.checkoutSection h3 {
+  margin-top: 0;
+}
+
+.checkoutForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.checkoutForm label {
+  font-weight: bold;
+  margin-top: 6px;
+}
+
+.checkoutForm input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font: inherit;
+  background: white;
+}
+
+.checkoutForm input:focus {
+  outline: none;
+  border-color: black;
+}
+
+.primaryBtn {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 10px;
+  background: black;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+}
+
+.primaryBtn:hover {
+  opacity: 0.9;
+}
+
+.errorText {
+  color: #b00020;
+  font-size: 14px;
+  margin: 6px 0 0 0;
+}
+.confirmMessage {
+  margin-bottom: 18px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #eef7ee;
+  border: 1px solid #cfe3cf;
+}
+
+.confirmDetails {
+  margin-bottom: 18px;
+}
+
+.confirmDetails p {
+  margin: 8px 0;
+}
+
+.confirmItems {
+  margin-top: 20px;
+}
+
+.confirmItem {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.confirmItem:last-child {
+  border-bottom: 0;
+}
