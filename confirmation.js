@@ -5,6 +5,7 @@ function money(n) {
 const confirmationBox = document.getElementById("confirmationBox");
 
 function renderConfirmation() {
+
   const latestOrder = JSON.parse(localStorage.getItem("latestOrder"));
 
   if (!latestOrder) {
@@ -12,6 +13,16 @@ function renderConfirmation() {
       <div class="empty">No recent order was found.</div>
     `;
     return;
+  }
+
+  // REP-4: Store orders for revenue calculation
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+  const exists = orders.some(order => order.orderId === latestOrder.orderId);
+
+  if (!exists) {
+    orders.push(latestOrder);
+    localStorage.setItem("orders", JSON.stringify(orders));
   }
 
   const itemsHtml = latestOrder.items
@@ -53,12 +64,39 @@ function renderConfirmation() {
         <span>Total</span>
         <strong>${money(latestOrder.total)}</strong>
       </div>
+
+      <!-- REP-4 Revenue Summary -->
+      <div class="summaryRow">
+        <span>Total Revenue (All Orders)</span>
+        <strong id="revenueTotal">$0.00</strong>
+      </div>
     </div>
 
     <div class="actions">
       <a class="linkBtn" href="index.html">Continue Shopping</a>
     </div>
   `;
+
+  calculateRevenue();
+}
+
+
+// REP-4: Calculate total revenue
+function calculateRevenue() {
+
+  const orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+  let totalRevenue = 0;
+
+  orders.forEach(order => {
+    totalRevenue += order.total;
+  });
+
+  const revenueEl = document.getElementById("revenueTotal");
+
+  if (revenueEl) {
+    revenueEl.innerText = money(totalRevenue);
+  }
 }
 
 renderConfirmation();
