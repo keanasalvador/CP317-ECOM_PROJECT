@@ -17,11 +17,11 @@ function renderConfirmation() {
     return;
   }
 
-  // REP-4: Ensure total exists for revenue calculation
-  latestOrder.total = latestOrder.items.reduce((sum, item) => sum + (item.lineTotal || 0), 0);
-
   // REP-4: Store orders for revenue calculation
   let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+  // Calculate total from lineTotal for this order
+  latestOrder.total = latestOrder.items.reduce((sum, item) => sum + (item.lineTotal || 0), 0);
 
   const exists = orders.some(order => order.orderId === latestOrder.orderId);
 
@@ -91,7 +91,7 @@ function calculateRevenue() {
   let totalRevenue = 0;
 
   orders.forEach(order => {
-    totalRevenue += order.total; // total is guaranteed to exist now
+    totalRevenue += parseFloat(order.total || 0); // ensures number
   });
 
   const revenueEl = document.getElementById("revenueTotal");
