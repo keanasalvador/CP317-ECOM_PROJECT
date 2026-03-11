@@ -1,5 +1,7 @@
+// Get the manager summary container
 const managerSummary = document.getElementById("managerSummary");
 
+// Function to get orders from localStorage safely
 function getOrders() {
   try {
     const raw = localStorage.getItem("orders");
@@ -11,24 +13,20 @@ function getOrders() {
   }
 }
 
+// Render the manager dashboard summary
 function renderManagerSummary() {
   const orders = getOrders();
   const totalOrders = orders.length;
 
+  // Count completed orders (Placed or Completed)
   const completedOrders = orders.filter(order =>
     order.status === "Placed" || order.status === "Completed"
   ).length;
 
-  // Calculate total revenue
+  // Sum total revenue (if totalPrice exists in orders)
   const totalRevenue = orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
 
-  // If no orders, show message
-  if (totalOrders === 0) {
-    managerSummary.innerHTML = `<p>No orders have been placed yet.</p>`;
-    return;
-  }
-
-  // Render summary
+  // Always render the dashboard, even if there are no orders
   managerSummary.innerHTML = `
     <div class="cartSummary">
       <div class="summaryRow">
@@ -53,4 +51,5 @@ function renderManagerSummary() {
   `;
 }
 
+// Call the function to render dashboard
 renderManagerSummary();
