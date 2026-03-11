@@ -1,3 +1,16 @@
+const managerSummary = document.getElementById("managerSummary");
+
+function getOrders() {
+  try {
+    const raw = localStorage.getItem("orders");
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
 function renderManagerSummary() {
   const orders = getOrders();
   const totalOrders = orders.length;
@@ -7,10 +20,15 @@ function renderManagerSummary() {
   ).length;
 
   // Calculate total revenue
-  const totalRevenue = orders.reduce((sum, order) => {
-    return sum + (order.totalPrice || 0); // ensure totalPrice exists
-  }, 0);
+  const totalRevenue = orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
 
+  // If no orders, show message
+  if (totalOrders === 0) {
+    managerSummary.innerHTML = `<p>No orders have been placed yet.</p>`;
+    return;
+  }
+
+  // Render summary
   managerSummary.innerHTML = `
     <div class="cartSummary">
       <div class="summaryRow">
