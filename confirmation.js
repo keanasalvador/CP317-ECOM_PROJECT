@@ -1,3 +1,5 @@
+// confirmation.js
+
 function money(n) {
   return `$${n.toFixed(2)}`;
 }
@@ -14,6 +16,9 @@ function renderConfirmation() {
     `;
     return;
   }
+
+  // REP-4: Ensure total exists for revenue calculation
+  latestOrder.total = latestOrder.items.reduce((sum, item) => sum + (item.lineTotal || 0), 0);
 
   // REP-4: Store orders for revenue calculation
   let orders = JSON.parse(localStorage.getItem("orders")) || [];
@@ -80,20 +85,16 @@ function renderConfirmation() {
   calculateRevenue();
 }
 
-
-// REP-4: Calculate total revenue
+// REP-4: Calculate total revenue across all orders
 function calculateRevenue() {
-
   const orders = JSON.parse(localStorage.getItem("orders")) || [];
-
   let totalRevenue = 0;
 
   orders.forEach(order => {
-    totalRevenue += order.total;
+    totalRevenue += order.total; // total is guaranteed to exist now
   });
 
   const revenueEl = document.getElementById("revenueTotal");
-
   if (revenueEl) {
     revenueEl.innerText = money(totalRevenue);
   }
