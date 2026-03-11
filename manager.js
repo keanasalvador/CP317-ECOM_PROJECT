@@ -24,7 +24,7 @@ function renderManagerSummary() {
   ).length;
 
   // Calculate total revenue
-  const totalRevenue = orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
+  const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
 
   // Set innerHTML using template literal
   managerSummary.innerHTML = `
