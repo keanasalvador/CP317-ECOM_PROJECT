@@ -1,5 +1,8 @@
+import { db } from "./firebase.js";
+import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
 function money(n) {
-  return `$${n.toFixed(2)}`;
+  return `$${Number(n || 0).toFixed(2)}`;
 }
 
 const orderIdInput = document.getElementById("orderIdInput");
@@ -7,27 +10,16 @@ const trackBtn = document.getElementById("trackBtn");
 const trackingError = document.getElementById("trackingError");
 const trackingResult = document.getElementById("trackingResult");
 
-function getOrders() {
-  try {
-    const raw = localStorage.getItem("orders");
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
 function renderOrder(order) {
   const itemsHtml = (order.items || [])
-    .map(item => {
+    .map((item) => {
       return `
         <div class="confirmItem">
           <div>
             <strong>${item.name}</strong>
             <p>Quantity: ${item.quantity}</p>
           </div>
-          <strong>${money(item.lineTotal)}</strong>
+          <strong>${money((item.price || 0) * (item.quantity || 0))}</strong>
         </div>
       `;
     })
@@ -40,11 +32,12 @@ function renderOrder(order) {
     </div>
 
     <div class="confirmDetails">
-      <p><strong>Order ID:</strong> ${order.orderId}</p>
-      <p><strong>Name:</strong> ${order.fullName}</p>
-      <p><strong>Address:</strong> ${order.address}, ${order.city}, ${order.postal}</p>
+      <p><strong>Order ID:</strong> ${order.order_id}</p>
+      <p><strong>Name:</strong> ${order.customer_name}</p>
+      <p><strong>Email:</strong> ${order.customer_email || "N/A"}</p>
+      <p><strong>Address:</strong> ${order.shipping_address}</p>
       <p><strong>Status:</strong> ${order.status}</p>
-      <p><strong>Date:</strong> ${order.date}</p>
+      <p><strong>Date:</strong> ${new Date(order.created_at).toLocaleString()}</p>
     </div>
 
     <div class="confirmItems">
@@ -55,13 +48,13 @@ function renderOrder(order) {
     <div class="cartSummary">
       <div class="summaryRow">
         <span>Total</span>
-        <strong>${money(order.total || 0)}</strong>
+        <strong>${money(order.total)}</strong>
       </div>
     </div>
   `;
 }
 
-function trackOrder() {
+async function trackOrder() {
   trackingError.textContent = "";
   trackingResult.innerHTML = "";
 
@@ -72,21 +65,29 @@ function trackOrder() {
     return;
   }
 
-  const orders = getOrders();
-  const foundOrder = orders.find(order => order.orderId === orderId);
+  const q = query(collection(db, "orders"), where("order_id", "==", orderId));
+  const snapshot = await getDocs(q);
 
-  if (!foundOrder) {
+  if (snapshot.empty) {
     trackingError.textContent = "Order not found. Please check your order ID.";
     return;
   }
 
-  renderOrder(foundOrder);
+  renderOrder(snapshot.docs[0].data());
 }
 
-trackBtn.addEventListener("click", trackOrder);
+trackBtn.addEventListener("click", () => {
+  trackOrder().catch((error) => {
+    console.error("Error tracking order:", error);
+    trackingError.textContent = "Unable to track order right now. Please try again.";
+  });
+});
 
 orderIdInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
-    trackOrder();
+    trackOrder().catch((error) => {
+      console.error("Error tracking order:", error);
+      trackingError.textContent = "Unable to track order right now. Please try again.";
+    });
   }
 });

@@ -108,3 +108,5 @@ const PRODUCTS = [
     inStock: true,
   },
 ];
+
+window.PRODUCTS = PRODUCTS;

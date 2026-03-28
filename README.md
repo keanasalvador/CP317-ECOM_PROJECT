@@ -3,6 +3,12 @@ CP317-D – Software Engineering
 Wilfrid Laurier University  
 Group 17  
 
+## Firebase Setup (Local Only)
+
+1. Copy `firebase-config.example.js` to `firebase-config.local.js`.
+2. Paste your Firebase web config into `firebase-config.local.js`.
+3. `firebase-config.local.js` is git-ignored so your local config is not committed.
+
 ---
 
 ## Sprint 01 Checklist

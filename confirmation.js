@@ -1,36 +1,31 @@
-// confirmation.js
+import { db } from "./firebase.js";
+import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
 function money(n) {
-  return `$${n.toFixed(2)}`;
+  return `$${Number(n || 0).toFixed(2)}`;
 }
 
 const confirmationBox = document.getElementById("confirmationBox");
+const orderIdFromUrl = new URLSearchParams(window.location.search).get("orderId");
+const orderId = orderIdFromUrl || localStorage.getItem("lastOrderId");
 
-function renderConfirmation() {
-
-  const latestOrder = JSON.parse(localStorage.getItem("latestOrder"));
-
-  if (!latestOrder) {
-    confirmationBox.innerHTML = `
-      <div class="empty">No recent order was found.</div>
-    `;
+async function loadConfirmation() {
+  if (!orderId) {
+    confirmationBox.innerHTML = '<div class="empty">Missing order ID.</div>';
     return;
   }
 
-  // REP-4: Store orders for revenue calculation
-  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+  const q = query(collection(db, "orders"), where("order_id", "==", orderId));
+  const snapshot = await getDocs(q);
 
-  // Calculate total from lineTotal for this order
-  latestOrder.total = latestOrder.items.reduce((sum, item) => sum + (item.lineTotal || 0), 0);
-
-  const exists = orders.some(order => order.orderId === latestOrder.orderId);
-
-  if (!exists) {
-    orders.push(latestOrder);
-    localStorage.setItem("orders", JSON.stringify(orders));
+  if (snapshot.empty) {
+    confirmationBox.innerHTML = '<div class="empty">Order not found.</div>';
+    return;
   }
 
-  const itemsHtml = latestOrder.items
+  const data = snapshot.docs[0].data();
+  localStorage.setItem("lastOrderId", data.order_id);
+  const itemsHtml = (data.items || [])
     .map((item) => {
       return `
         <div class="confirmItem">
@@ -38,7 +33,7 @@ function renderConfirmation() {
             <strong>${item.name}</strong>
             <p>Quantity: ${item.quantity}</p>
           </div>
-          <strong>${money(item.lineTotal)}</strong>
+          <strong>${money((item.price || 0) * (item.quantity || 0))}</strong>
         </div>
       `;
     })
@@ -51,29 +46,23 @@ function renderConfirmation() {
     </div>
 
     <div class="confirmDetails">
-      <p><strong>Order ID:</strong> ${latestOrder.orderId}</p>
-      <p><strong>Name:</strong> ${latestOrder.fullName}</p>
-      <p><strong>Address:</strong> ${latestOrder.address}, ${latestOrder.city}, ${latestOrder.postal}</p>
-      <p><strong>Payment Method:</strong> ${latestOrder.maskedCard}</p>
-      <p><strong>Status:</strong> ${latestOrder.status}</p>
-      <p><strong>Date:</strong> ${latestOrder.date}</p>
+      <p><strong>Order ID:</strong> ${data.order_id}</p>
+      <p><strong>Name:</strong> ${data.customer_name}</p>
+      <p><strong>Email:</strong> ${data.customer_email}</p>
+      <p><strong>Address:</strong> ${data.shipping_address}</p>
+      <p><strong>Status:</strong> ${data.status}</p>
+      <p><strong>Date:</strong> ${new Date(data.created_at).toLocaleString()}</p>
     </div>
 
     <div class="confirmItems">
       <h3>Order Summary</h3>
-      ${itemsHtml}
+      ${itemsHtml || "<p>No items found for this order.</p>"}
     </div>
 
     <div class="cartSummary">
       <div class="summaryRow">
         <span>Total</span>
-        <strong>${money(latestOrder.total)}</strong>
-      </div>
-
-      <!-- REP-4 Revenue Summary -->
-      <div class="summaryRow">
-        <span>Total Revenue (All Orders)</span>
-        <strong id="revenueTotal">$0.00</strong>
+        <strong>${money(data.total)}</strong>
       </div>
     </div>
 
@@ -81,23 +70,9 @@ function renderConfirmation() {
       <a class="linkBtn" href="index.html">Continue Shopping</a>
     </div>
   `;
-
-  calculateRevenue();
 }
 
-// REP-4: Calculate total revenue across all orders
-function calculateRevenue() {
-  const orders = JSON.parse(localStorage.getItem("orders")) || [];
-  let totalRevenue = 0;
-
-  orders.forEach(order => {
-    totalRevenue += parseFloat(order.total || 0); // ensures number
-  });
-
-  const revenueEl = document.getElementById("revenueTotal");
-  if (revenueEl) {
-    revenueEl.innerText = money(totalRevenue);
-  }
-}
-
-renderConfirmation();
+loadConfirmation().catch((error) => {
+  console.error("Failed to load confirmation:", error);
+  confirmationBox.innerHTML = '<div class="empty">Unable to load order confirmation right now.</div>';
+});

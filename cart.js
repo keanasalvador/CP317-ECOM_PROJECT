@@ -113,6 +113,7 @@ function clearCartData() {
 
 function validateCheckoutForm() {
   const fullName = document.getElementById("fullName").value.trim();
+  const email = document.getElementById("email").value.trim();
   const address = document.getElementById("address").value.trim();
   const city = document.getElementById("city").value.trim();
   const postal = document.getElementById("postal").value.trim();
@@ -123,6 +124,7 @@ function validateCheckoutForm() {
 
   if (
     fullName === "" ||
+    email === "" ||
     address === "" ||
     city === "" ||
     postal === "" ||
@@ -132,6 +134,10 @@ function validateCheckoutForm() {
     cvv === ""
   ) {
     return "All fields are required.";
+  }
+
+  if (!/^\S+@\S+\.\S+$/.test(email)) {
+    return "Please enter a valid email address.";
   }
 
   if (!/^\d{16}$/.test(cardNumber)) {
@@ -159,8 +165,9 @@ function buildOrderObject() {
   }));
 
   return {
-    orderId: "ORD-" + Date.now(),
+    orderId: `ORD-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
     fullName: document.getElementById("fullName").value.trim(),
+    email: document.getElementById("email").value.trim(),
     address: document.getElementById("address").value.trim(),
     city: document.getElementById("city").value.trim(),
     postal: document.getElementById("postal").value.trim(),
@@ -171,6 +178,29 @@ function buildOrderObject() {
     status: "Placed",
     date: new Date().toLocaleString()
   };
+}
+
+async function placeOrderInFirestore(order) {
+  const [{ db }, { collection, addDoc }] = await Promise.all([
+    import("./firebase.js"),
+    import("https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js")
+  ]);
+
+  await addDoc(collection(db, "orders"), {
+    order_id: order.orderId,
+    items: order.items.map((item) => ({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity
+    })),
+    total: order.total,
+    customer_name: order.fullName,
+    customer_email: order.email,
+    shipping_address: `${order.address}, ${order.city}, ${order.postal}`,
+    status: "Processing",
+    created_at: new Date().toISOString()
+  });
 }
 
 if (cardNumberInput) {
@@ -204,7 +234,7 @@ if (expiryInput) {
 }
 
 if (checkoutForm) {
-  checkoutForm.addEventListener("submit", (event) => {
+  checkoutForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     if (checkoutError) {
@@ -229,17 +259,18 @@ if (checkoutForm) {
 
     const order = buildOrderObject();
 
-    localStorage.setItem("latestOrder", JSON.stringify(order));
-
-    const existingOrders = JSON.parse(localStorage.getItem("orders")) || [];
-    existingOrders.push(order);
-    localStorage.setItem("orders", JSON.stringify(existingOrders));
-
-    clearCartData();
-    renderCart();
-
-    alert("Order placed successfully!");
-    window.location.href = "confirmation.html";
+    try {
+      await placeOrderInFirestore(order);
+      localStorage.setItem("lastOrderId", order.orderId);
+      clearCartData();
+      renderCart();
+      window.location.href = `confirmation.html?orderId=${encodeURIComponent(order.orderId)}`;
+    } catch (error) {
+      console.error("Error placing order:", error);
+      if (checkoutError) {
+        checkoutError.textContent = "Unable to place order right now. Please try again.";
+      }
+    }
   });
 }
 
