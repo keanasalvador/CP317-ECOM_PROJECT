@@ -1,3 +1,6 @@
+import { db } from "./firebase.js";
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
 function money(n) {
   return `$${n.toFixed(2)}`;
 }
@@ -181,11 +184,6 @@ function buildOrderObject() {
 }
 
 async function placeOrderInFirestore(order) {
-  const [{ db }, { collection, addDoc }] = await Promise.all([
-    import("./firebase.js"),
-    import("https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js")
-  ]);
-
   await addDoc(collection(db, "orders"), {
     order_id: order.orderId,
     items: order.items.map((item) => ({
